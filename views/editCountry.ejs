@@ -79,10 +79,10 @@
                     <div class="form-control">
                         <label class="label">(Sub) Region</label>
                         <select name="subRegionId" required class="select select-bordered">
-                            <% subRegions.forEach(subRegion=>{ %>
-                                <option <%= (country.subRegionId == subRegion.id) ? "selected" : "" %> 
-                                    value="<%= subRegion.id %>">
-                                    <%= subRegion.subRegion %>
+                            <% subRegions.forEach(subRegion => { %>
+                                <option value="<%= subRegion.id %>" 
+                                    <%= (country.subRegionId == subRegion.id) ? "selected" : "" %>>
+                                    <%= subRegion.region %> - <%= subRegion.subRegion %>
                                 </option>
                             <% }) %>
                         </select>

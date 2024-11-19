@@ -21,46 +21,174 @@
 
   <div class="container mx-auto p-4">
 
-    <div class="hero bg-base-200 rounded-lg p-6">
-      <div class="hero-content text-center">
-        <div class="max-w-md">
-          <h1 class="text-5xl font-bold"><%= country.commonName %></h1>
-          <p class="py-6">Below, you will find detailed information about the country: <%= country.commonName %></p>
+    <div class="country-container">
+      <div class="country-header">
+        <div class="flag-section">
+          <img src="<%= country.flag %>" alt="<%= country.commonName %> flag" class="flag">
+        </div>
+        <div class="title-section">
+          <h1><%= country.commonName %></h1>
+          <p class="native-name"><%= country.officialName %></p>
         </div>
       </div>
-    </div>
 
-    <br />
+      <div class="info-grid">
+        <div class="info-card">
+          <h2>Location</h2>
+          <div class="info-content">
+            <p><strong>Capital:</strong> <%= country.capital %></p>
+            <p><strong>Region:</strong> <%= country.SubRegion.region %></p>
+            <p><strong>Sub-region:</strong> <%= country.SubRegion.subRegion %></p>
+          </div>
+        </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div>
-        <img class="w-full rounded-lg" src="<%= country.flag %>" alt="Flag of <%= country.commonName %>" />
-        <br><br>
-      </div>
-      <div class="prose">
+        <div class="info-card">
+          <h2>Demographics</h2>
+          <div class="info-content">
+            <p><strong>Population:</strong> <%= country.population.toLocaleString() %></p>
+            <p><strong>Languages:</strong> <%= country.languages %></p>
+            <p><strong>Area:</strong> <%= country.area.toLocaleString() %> km²</p>
+          </div>
+        </div>
 
-        <p>
-          <span class="font-bold">Official Name: </span> <%= country.officialName %> <br />
-          <span class="font-bold">Native Name: </span> <%= country.nativeName %> <br />
-          <span class="font-bold">Coat of Arms: </span> &nbsp;&nbsp;
-          <img class="h-20" style="display: inline; height: 20;" src="<%= country.coatOfArms %>" alt="Coat of Arms of <%= country.commonName %>" /><br />
-          <span class="font-bold">Country Code (numeric-3): </span> <%= country.id %> <br />
-          <span class="font-bold">Capital: </span> <%= country.capital %> <br />
-          <span class="font-bold">Languages: </span> <%= country.languages %> <br />
-          <span class="font-bold">Population: </span> <%= (country.population * 1).toLocaleString() %> <br />
-          <span class="font-bold">Area: </span> <%= (country.area * 1).toLocaleString() %> Km<sup>2</sup> <br />
-          <span class="font-bold">Currencies: </span> <%= country.currencies %> <br />
-          <span class="font-bold">Region/Sub-region: </span> <%= country.SubRegion.region %>/<%= country.SubRegion.subRegion %> <br />
-          <span class="font-bold">On OpenStreetMap: </span> <a href="<%= country.openStreetMaps %>" class="btn btn-primary mt-2 btn-xs" target="_blank"><%= country.commonName %></a> <br /><br />
-          
-          <span id="quote"></span>
-          <br /><br />
-          <a class="btn btn-primary btn-sm" href="#" onclick="history.back(); return false;">RETURN</a>
-        </p>
-
+        <div class="info-card">
+          <h2>Economy</h2>
+          <div class="info-content">
+            <p><strong>Currency:</strong> <%= country.currencies %></p>
+          </div>
+        </div>
       </div>
 
+      <div class="map-section">
+        <h2>Location Map</h2>
+        <% if (country.maps) { %>
+          <a href="<%= country.maps %>" target="_blank" class="map-link">View on OpenStreetMap</a>
+        <% } else { %>
+          <a href="https://www.openstreetmap.org/search?query=<%= country.commonName %>" target="_blank" class="map-link">
+            View on OpenStreetMap
+          </a>
+        <% } %>
+      </div>
     </div>
+
+    <style>
+    .country-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .country-header {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .flag-section {
+      flex-shrink: 0;
+    }
+
+    .flag {
+      width: 300px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .title-section h1 {
+      font-size: 2.5rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    .native-name {
+      color: #666;
+      font-style: italic;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .info-card {
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .info-card h2 {
+      color: #333;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .info-content p {
+      margin: 0.75rem 0;
+      color: #444;
+    }
+
+    .info-content strong {
+      color: #333;
+      margin-right: 0.5rem;
+    }
+
+    .map-section {
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .map-section h2 {
+      color: #333;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .map-link {
+      display: inline-block;
+      background: #6c5ce7;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+
+    .map-link:hover {
+      background: #5849c4;
+    }
+
+    @media (max-width: 768px) {
+      .country-container {
+        padding: 1rem;
+      }
+
+      .country-header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .flag {
+        width: 100%;
+        max-width: 300px;
+      }
+
+      .title-section h1 {
+        font-size: 2rem;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    </style>
 
     <div class="card-actions justify-end">
         <a href="/editCountry/<%= country.id %>" class="btn btn-success">Edit</a>

@@ -30,12 +30,42 @@ const Country = sequelize.define(
   "Country",
   {
     id: { type: Sequelize.STRING, primaryKey: true },
-    commonName: Sequelize.STRING,
-    officialName: Sequelize.STRING,
-    nativeName: Sequelize.STRING,
-    currencies: Sequelize.STRING,
-    capital: Sequelize.STRING,
-    languages: Sequelize.STRING,
+    commonName: {
+      type: Sequelize.STRING,
+      set(val) {
+        this.setDataValue('commonName', val ? val.trim() : null);
+      }
+    },
+    officialName: {
+      type: Sequelize.STRING,
+      set(val) {
+        this.setDataValue('officialName', val ? val.trim() : null);
+      }
+    },
+    nativeName: {
+      type: Sequelize.STRING,
+      set(val) {
+        this.setDataValue('nativeName', val ? val.trim() : null);
+      }
+    },
+    currencies: {
+      type: Sequelize.STRING,
+      set(val) {
+        this.setDataValue('currencies', val ? val.trim() : null);
+      }
+    },
+    capital: {
+      type: Sequelize.STRING,
+      set(val) {
+        this.setDataValue('capital', val ? val.trim() : null);
+      }
+    },
+    languages: {
+      type: Sequelize.STRING,
+      set(val) {
+        this.setDataValue('languages', val ? val.trim() : null);
+      }
+    },
     openStreetMaps: Sequelize.STRING,
     population: Sequelize.INTEGER,
     area: Sequelize.INTEGER,

@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Countries</title>
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Countries</title>
-  <link rel="stylesheet" href="/css/main.css" />
-
-</head>
-
-<body tabindex="-1">
-  <!-- <div class="navbar bg-base-100">
+  <body tabindex="-1">
+    <!-- <div class="navbar bg-base-100">
     <div class="flex-1">
       <a class="btn btn-ghost normal-case text-xl" href="/">Countries</a>
     </div>
@@ -60,49 +58,106 @@
     </div>
   </div> -->
 
-  <%- include('partials/navbar', {page: '/about'}) %>
-
-  <br />
-
-  <div class="container mx-auto">
-
-    <div class="hero bg-base-200 rounded-lg p-6">
-      <div class="hero-content text-center ">
-        <div class="max-w-md">
-          <h1 class="text-5xl font-bold">About</h1>
-
-          <p class="py-6">Everything you want to know about me - the designer &amp; developer.</p>
-
-        </div>
-      </div>
-    </div>
+    <%- include('partials/navbar', {page: '/about'}) %>
 
     <br />
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div>
-        <img class="w-full rounded-lg"
-          src="https://www.senecapolytechnic.ca/news-and-events/seneca-news/seneca-polytechnic-introduces-first-three-year-degree-programs-in-its-history/_jcr_content/root/responsivegrid/container/container2/image_1690848975.img.jpg/1724436877695.jpg"
-          alt="profile" />
-
-      </div>
-      <div class="prose">
-
-        <p>My name is W. Song and I'm currently studying at Seneca Polytechnic.</p>
-
-        <p>Donec sollicitudin molestie tortor, vel feugiat nulla maximus quis. Suspendisse ut sapien id mauris
-          sollicitudin commodo. Quisque semper, ligula et tincidunt dapibus, nisi ante fermentum lectus, nec molestie
-          sem eros vel neque. Duis sit amet ligula eu ligula consectetur blandit sed at mi. Sed ac odio aliquet,
-          vestibulum justo eget, volutpat eros. Mauris a dictum erat. Vivamus sodales egestas tempus. Duis pulvinar nibh
-          enim, vel gravida nunc egestas id. Duis magna ante, posuere id luctus id, mattis at ipsum. Nullam sit amet
-          magna et dui varius tristique ac id nisl. Pellentesque est dolor, luctus vitae dictum ut, hendrerit lacinia
-          lorem. Nullam a pharetra tortor.</p>
-
+    <div class="about-container">
+      <div class="about-header">
+        <h1>About This Project</h1>
       </div>
 
+      <div class="content">
+        <div class="info-section">
+          <h2>Created By</h2>
+          <p class="creator-name">HASIT PATEL</p>
+          <h2>Our Mission</h2>
+          <p>Providing comprehensive information about countries around the world, making global knowledge accessible to everyone.</p>
+        </div>
+
+        <div class="features">
+          <div class="feature">
+            <h3>Comprehensive Data</h3>
+            <p>Detailed information about every UN recognized country</p>
+          </div>
+
+          <div class="feature">
+            <h3>Easy Navigation</h3>
+            <p>Simple and intuitive interface to find country information</p>
+          </div>
+
+          <div class="feature">
+            <h3>Global Coverage</h3>
+            <p>Information about all regions and sub-regions</p>
+          </div>
+        </div>
+      </div>
     </div>
-
-  </div>
-</body>
-
+  </body>
 </html>
+
+<style>
+.about-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.about-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.about-header h1 {
+  font-size: 2.5rem;
+  color: #333;
+}
+
+.info-section {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.info-section h2 {
+  color: #333;
+  margin: 1rem 0;
+}
+
+.creator-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2196F3;
+  margin-bottom: 2rem;
+}
+
+.info-section p {
+  color: #666;
+  line-height: 1.6;
+}
+
+.features {
+  display: grid;
+  gap: 2rem;
+}
+
+.feature {
+  background: #f5f5f5;
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.feature h3 {
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.feature p {
+  color: #666;
+}
+
+@media (min-width: 768px) {
+  .features {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+</style>

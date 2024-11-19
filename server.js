@@ -1,3 +1,19 @@
+/********************************************************************************
+*  WEB322 – Assignment 05
+* 
+*  I declare that this assignment is my own work in accordance with Seneca's
+*  Academic Integrity Policy:
+* 
+*  https://www.senecacollege.ca/about/policies/academic-integrity-policy.html
+* 
+*  Name: Hasit Prakashkumar Patel Student ID: 143320232 Date: 19/11/2024
+*
+*  Published URL: 
+*
+********************************************************************************/
+
+
+
 const countryData = require("./modules/country-service");
 const path = require("path");
 const express = require("express");

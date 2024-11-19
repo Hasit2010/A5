@@ -17,17 +17,71 @@
   <div class="container mx-auto">
 
 
-    <div class="hero bg-base-200 rounded-lg p-6">
-      <div class="hero-content text-center ">
-        <div class="max-w-md">
-          <h1 class="text-5xl font-bold">Welcome</h1>
-
-          <p class="py-6">From North America, we start to explore the countries in the world.</p>
-      
-          <a href="/countries" class="btn btn-primary">Get Started Now</a>
-        </div>
+    <div class="hero-section">
+      <h1 class="gradient-text">Explore Our World</h1>
+      <p class="subtitle">Begin your journey through the diverse nations of Earth</p>
+      <div class="starting-point">
+        <span class="highlight">Starting Point:</span> North America
       </div>
+      <a href="/countries" class="cta-button">
+        <span>Start Exploring</span>
+        <i class="fas fa-arrow-right"></i>
+      </a>
     </div>
+
+    <style>
+    .hero-section {
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #fff;
+      padding: 2rem;
+    }
+
+    .gradient-text {
+      font-size: 4rem;
+      background: linear-gradient(45deg, #4CAF50, #2196F3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    .subtitle {
+      font-size: 1.5rem;
+      color: #e0e0e0;
+      margin-bottom: 2rem;
+    }
+
+    .starting-point {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.5rem 1.5rem;
+      border-radius: 20px;
+      margin: 1rem 0;
+    }
+
+    .highlight {
+      color: #4CAF50;
+    }
+
+    .cta-button {
+      background: linear-gradient(45deg, #4CAF50, #2196F3);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 30px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: transform 0.3s;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+    }
+    </style>
 
     <br />
 
