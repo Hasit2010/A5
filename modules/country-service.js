@@ -1,67 +1,113 @@
-const countryData = require("../data/countryData");
-const subRegionData = require("../data/subRegionData");
+require("dotenv").config();
+const Sequelize = require("sequelize");
 
-let countries = [];
+const sequelize = new Sequelize(
+  process.env.DB_DATABASE,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    dialect: "postgres",
+    ssl: true,
+    dialectOptions: {
+      ssl: { require: true, rejectUnauthorized: false },
+    },
+  }
+);
 
+// Models
+const SubRegion = sequelize.define(
+  "SubRegion",
+  {
+    id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+    subRegion: Sequelize.STRING,
+    region: Sequelize.STRING,
+  },
+  { timestamps: false }
+);
+
+const Country = sequelize.define(
+  "Country",
+  {
+    id: { type: Sequelize.STRING, primaryKey: true },
+    commonName: Sequelize.STRING,
+    officialName: Sequelize.STRING,
+    nativeName: Sequelize.STRING,
+    currencies: Sequelize.STRING,
+    capital: Sequelize.STRING,
+    languages: Sequelize.STRING,
+    openStreetMaps: Sequelize.STRING,
+    population: Sequelize.INTEGER,
+    area: Sequelize.INTEGER,
+    landlocked: Sequelize.BOOLEAN,
+    coatOfArms: Sequelize.STRING,
+    flag: Sequelize.STRING,
+    subRegionId: Sequelize.INTEGER,
+  },
+  { timestamps: false }
+);
+
+Country.belongsTo(SubRegion, { foreignKey: "subRegionId" });
+
+// Initialization
 function initialize() {
-  return new Promise((resolve, reject) => {
-    countryData?.forEach(country => {
-      let countryWithSubRegion = { ...country, subRegionObj: subRegionData.find(sr => sr.id == country.subRegionId) }
-      countries.push(countryWithSubRegion);
-      resolve();
-    });
-  });
-
+  return sequelize.sync();
 }
 
+// Get all countries
 function getAllCountries() {
-  return new Promise((resolve, reject) => {
-    resolve(countries);
-  });
+  return Country.findAll({ include: SubRegion });
 }
 
+// Get a country by ID
 function getCountryById(id) {
+  return Country.findByPk(id, { include: SubRegion });
+}
 
-  return new Promise((resolve, reject) => {
-    let foundCountry = countries.find(c => c.id == id);
-
-    if (foundCountry) {
-      resolve(foundCountry); return;
-    } else {
-      reject("Unable to find requested country");
-    }
+// Get countries by sub-region
+function getCountriesBySubRegion(subRegionName) {
+  return Country.findAll({
+    include: {
+      model: SubRegion,
+      where: { subRegion: { [Sequelize.Op.iLike]: `%${subRegionName}%` } },
+    },
   });
 }
 
-function getCountriesBySubRegion(subRegion) {
-
-  return new Promise((resolve, reject) => {
-    let foundCountries = countries.filter(c => c.subRegionObj.subRegion.toUpperCase().includes(subRegion.toUpperCase()));
-
-    if (foundCountries.length > 0) {
-      resolve(foundCountries)
-    } else {
-      reject(`Unable to find requested countries for the given subRegion - ${subRegion}`);
-    }
+// Get countries by region
+function getCountriesByRegion(regionName) {
+  return Country.findAll({
+    include: {
+      model: SubRegion,
+      where: { region: { [Sequelize.Op.iLike]: `%${regionName}%` } },
+    },
   });
-
 }
 
-function getCountriesByRegion(region) {
+// Get all sub-regions
+const getAllSubRegions = async () => {
+  try {
+    return await SubRegion.findAll();
+  } catch (err) {
+    throw new Error(`Error getting sub-regions: ${err.message}`);
+  }
+};
 
-  return new Promise((resolve, reject) => {
-    let foundCountries = countries.filter(c => c.subRegionObj.region.toUpperCase().includes(region.toUpperCase()));
+// Add a new country
+const addCountry = async (countryData) => {
+  try {
+    await Country.create(countryData);
+  } catch (err) {
+    throw new Error(err.errors?.[0]?.message || 'Error creating country');
+  }
+};
 
-    if (foundCountries.length > 0) {
-      resolve(foundCountries)
-    } else {
-      reject(`Unable to find requested countries for the given region - ${region}`);
-    }
-  });
-
-}
-
-
-module.exports = { initialize, getAllCountries, getCountryById, getCountriesByRegion, getCountriesBySubRegion }
-
-
+module.exports = {
+  initialize,
+  getAllCountries,
+  getCountryById,
+  getCountriesBySubRegion,
+  getCountriesByRegion,
+  getAllSubRegions,
+  addCountry,
+};

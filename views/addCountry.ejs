@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Country</title>
+    <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body tabindex="-1">
+    <%- include('partials/navbar', {page: '/addCountry'}) %>
+
+    <br />
+
+    <div class="container mx-auto">
+        <div class="hero bg-base-200 rounded-lg p-6 mb-8">
+            <div class="hero-content text-center">
+                <div class="max-w-md">
+                    <h1 class="text-5xl font-bold">Add Country</h1>
+                    <p class="py-6">Use the below form to add a new UN Country to the collection</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+                <form action="/addCountry" method="POST">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Common Name -->
+                        <div class="form-control w-full">
+                            <label class="label">
+                                <span class="label-text">Common Name</span>
+                            </label>
+                            <input type="text" name="commonName" required class="input input-bordered w-full" />
+                        </div>
+
+                        <!-- Official Name -->
+                        <div class="form-control w-full">
+                            <label class="label">
+                                <span class="label-text">Official Name</span>
+                            </label>
+                            <input type="text" name="officialName" required class="input input-bordered w-full" />
+                        </div>
+
+                        <!-- Native Name -->
+                        <div class="form-control w-full">
+                            <label class="label">
+                                <span class="label-text">Native Name</span>
+                            </label>
+                            <input type="text" name="nativeName" required class="input input-bordered w-full" />
+                        </div>
+
+                        <!-- Numeric-3 Code -->
+                        <div class="form-control w-full">
+                            <label class="label">
+                                <span class="label-text">Numeric-3 Code</span>
+                            </label>
+                            <input type="text" name="id" required class="input input-bordered w-full" />
+                        </div>
+
+                        <!-- Capital -->
+                        <div class="form-control w-full">
+                            <label class="label">
+                                <span class="label-text">Capital</span>
+                            </label>
+                            <input type="text" name="capital" required class="input input-bordered w-full" />
+                        </div>
+
+                        <!-- Languages -->
+                        <div class="form-control w-full">
+                            <label class="label">
+                                <span class="label-text">Languages</span>
+                            </label>
+                            <input type="text" name="languages" required class="input input-bordered w-full" />
+                        </div>
+
+                        <!-- Population -->
+                        <div class="form-control w-full">
+                            <label class="label">
+                                <span class="label-text">Population</span>
+                            </label>
+                            <input type="number" name="population" required class="input input-bordered w-full" />
+                        </div>
+
+                        <!-- Area -->
+                        <div class="form-control w-full">
+                            <label class="label">
+                                <span class="label-text">Area</span>
+                            </label>
+                            <input type="number" name="area" required class="input input-bordered w-full" />
+                        </div>
+
+                        <!-- Currencies -->
+                        <div class="form-control w-full">
+                            <label class="label">
+                                <span class="label-text">Currencies</span>
+                            </label>
+                            <input type="text" name="currencies" required class="input input-bordered w-full" />
+                        </div>
+
+                        <!-- Sub Region -->
+                        <div class="form-control w-full">
+                            <label class="label">
+                                <span class="label-text">(Sub) Region</span>
+                            </label>
+                            <select name="subRegionId" required class="select select-bordered w-full">
+                                <% subRegions.forEach(subRegion=>{ %>
+                                    <option value="<%= subRegion.id %>"><%= subRegion.subRegion %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+
+                        <!-- Is Landlocked -->
+                        <div class="form-control">
+                            <label class="label cursor-pointer">
+                                <span class="label-text">Is Landlocked?</span>
+                                <input type="checkbox" name="landlocked" class="checkbox" />
+                            </label>
+                        </div>
+
+                        <!-- Open Street Maps URL -->
+                        <div class="form-control w-full">
+                            <label class="label">
+                                <span class="label-text">Open Street Maps URL</span>
+                            </label>
+                            <input type="text" name="openStreetMaps" class="input input-bordered w-full" />
+                        </div>
+
+                        <!-- Flag Image URL -->
+                        <div class="form-control w-full">
+                            <label class="label">
+                                <span class="label-text">Flag Image URL</span>
+                            </label>
+                            <input type="text" name="flag" required class="input input-bordered w-full" />
+                        </div>
+
+                        <!-- Coat of Arms URL -->
+                        <div class="form-control w-full">
+                            <label class="label">
+                                <span class="label-text">Coat of Arms URL</span>
+                            </label>
+                            <input type="text" name="coatOfArms" required class="input input-bordered w-full" />
+                        </div>
+                    </div>
+
+                    <div class="card-actions justify-end mt-6">
+                        <button type="submit" class="btn btn-primary">Add Country</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <br />
+</body>
+</html>

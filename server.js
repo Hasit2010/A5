@@ -1,62 +1,82 @@
 const countryData = require("./modules/country-service");
 const path = require("path");
+const express = require("express");
+const { getAllSubRegions, addCountry } = require('./modules/country-service');
 
-const express = require('express');
 const app = express();
-
 const HTTP_PORT = process.env.PORT || 8080;
 
-// app.use(express.static('public')); // causing tailwindCSS not working on vercel.com
-app.use(express.static(path.join(__dirname, 'public')));
-app.set('view engine', 'ejs');
+// Middleware for serving static files and parsing form data
+app.use(express.static(path.join(__dirname, "public")));
+app.use(express.urlencoded({ extended: true }));
+app.set("view engine", "ejs");
+app.set("views", __dirname + "/views");
 
-app.set('views', __dirname + '/views');
+// Routes
+app.get("/", (req, res) => res.render("home"));
 
+app.get("/about", (req, res) => res.render("about"));
 
-app.get('/', (req, res) => {
-  res.render("home")
-});
-
-app.get('/about', (req, res) => {
-  res.render("about");
-});
-
-app.get("/countries", async (req,res)=>{
-
-  let countries = [];
+app.get("/countries", async (req, res) => {
   try {
-    if(req.query.region){
+    let countries;
+    if (req.query.region) {
       countries = await countryData.getCountriesByRegion(req.query.region);
-    } else if(req.query.subRegion) {
-      countries = await countryData.getCountriesBySubRegion(req.query.subRegion);
+    } else if (req.query.subRegion) {
+      countries = await countryData.getCountriesBySubRegion(
+        req.query.subRegion
+      );
     } else {
       countries = await countryData.getAllCountries();
     }
-
-    res.render("countries", {countries})
-  }catch(err){
-    res.status(404).render("404", {message: err});
-  }
-
-});
-
-app.get("/countries/:id", async (req,res)=>{
-  
-  try{
-    let country = await countryData.getCountryById(req.params.id);
-    // res.send(country);
-    res.render("country", {country})
-  }catch(err){
-    console.log(" err:",  err)
-    res.status(404).render("404", {message: err});
+    res.render("countries", { countries });
+  } catch (err) {
+    res.status(404).render("404", { message: err.message });
   }
 });
 
-app.use((req, res, next) => {
-  res.status(404).render("404", {message: "I'm sorry, we're unable to find what you're looking for"});
+app.get("/countries/:id", async (req, res) => {
+  try {
+    const country = await countryData.getCountryById(req.params.id);
+    res.render("country", { country });
+  } catch (err) {
+    res.status(404).render("404", { message: err.message });
+  }
 });
 
-
-countryData.initialize().then(()=>{
-  app.listen(HTTP_PORT, () => { console.log(`server listening on: ${HTTP_PORT}`) });
+// GET /addCountry
+app.get("/addCountry", async (req, res) => {
+  try {
+    const subRegions = await getAllSubRegions();
+    res.render("addCountry", { subRegions: subRegions });
+  } catch(err) {
+    res.render("500", { message: `Error retrieving sub-regions: ${err}` });
+  }
 });
+
+// POST /addCountry
+app.post("/addCountry", async (req, res) => {
+  try {
+    await addCountry(req.body);
+    res.redirect('/countries');
+  } catch(err) {
+    res.render("500", { message: `I'm sorry, but we have encountered the following error: ${err}` });
+  }
+});
+
+// 404 Handler
+app.use((req, res) =>
+  res.status(404).render("404", { message: "Page not found" })
+);
+
+countryData
+  .initialize()
+  .then(() => {
+    console.log("Data imported successfully!");
+    app.listen(HTTP_PORT, () => {
+      console.log(`Server listening on: http://localhost:${HTTP_PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Failed to initialize the database:", err);
+  });
