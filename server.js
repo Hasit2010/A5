@@ -1,7 +1,7 @@
 const countryData = require("./modules/country-service");
 const path = require("path");
 const express = require("express");
-const { getAllSubRegions, addCountry } = require('./modules/country-service');
+const { getAllSubRegions, addCountry, getCountryById, getCountriesByRegion, editCountry, deleteCountry } = require('./modules/country-service');
 
 const app = express();
 const HTTP_PORT = process.env.PORT || 8080;
@@ -62,6 +62,43 @@ app.post("/addCountry", async (req, res) => {
   } catch(err) {
     res.render("500", { message: `I'm sorry, but we have encountered the following error: ${err}` });
   }
+});
+
+app.get("/editCountry/:id", (req, res) => {
+    Promise.all([
+        getCountryById(req.params.id),
+        getCountriesByRegion()
+    ])
+    .then(([countryData, subRegionData]) => {
+        res.render("editCountry", { country: countryData, subRegions: subRegionData });
+    })
+    .catch(err => {
+        res.status(404).render("404", { message: err });
+    });
+});
+
+app.post("/editCountry", (req, res) => {
+    editCountry(req.body.id, req.body)
+        .then(() => {
+            res.redirect("/countries");
+        })
+        .catch(err => {
+            res.render("500", { 
+                message: `I'm sorry, but we have encountered the following error: ${err}` 
+            });
+        });
+});
+
+app.get("/deleteCountry/:id", (req, res) => {
+    deleteCountry(req.params.id)
+        .then(() => {
+            res.redirect("/countries");
+        })
+        .catch(err => {
+            res.render("500", { 
+                message: `I'm sorry, but we have encountered the following error: ${err}` 
+            });
+        });
 });
 
 // 404 Handler

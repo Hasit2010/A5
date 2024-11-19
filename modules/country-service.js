@@ -98,9 +98,39 @@ const addCountry = async (countryData) => {
   try {
     await Country.create(countryData);
   } catch (err) {
-    throw new Error(err.errors?.[0]?.message || 'Error creating country');
+    throw new Error(err.errors?.[0]?.message || "Error creating country");
   }
 };
+
+// Edit country function
+function editCountry(id, countryData) {
+  return new Promise((resolve, reject) => {
+    Country.update(countryData, {
+      where: { id: id },
+    })
+      .then(() => resolve())
+      .catch((err) =>
+        reject(err.errors?.[0]?.message || "Error updating country")
+      );
+  });
+}
+
+// Delete country function
+function deleteCountry(id) {
+  return new Promise((resolve, reject) => {
+    Country.destroy({
+      where: { id: id },
+    })
+      .then((numDeleted) => {
+        if (numDeleted === 0) {
+          reject("Country not found");
+        } else {
+          resolve();
+        }
+      })
+      .catch((err) => reject(err.message || "Error deleting country"));
+  });
+}
 
 module.exports = {
   initialize,
@@ -110,4 +140,6 @@ module.exports = {
   getCountriesByRegion,
   getAllSubRegions,
   addCountry,
+  editCountry,
+  deleteCountry,
 };
