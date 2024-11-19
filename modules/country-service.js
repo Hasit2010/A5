@@ -103,33 +103,35 @@ const addCountry = async (countryData) => {
 };
 
 // Edit country function
-function editCountry(id, countryData) {
-  return new Promise((resolve, reject) => {
-    Country.update(countryData, {
-      where: { id: id },
-    })
-      .then(() => resolve())
-      .catch((err) =>
-        reject(err.errors?.[0]?.message || "Error updating country")
-      );
-  });
+async function editCountry(id, countryData) {
+  try {
+    const [updatedRows] = await Country.update(countryData, {
+      where: { id: id }
+    });
+    
+    if (updatedRows === 0) {
+      throw new Error("Country not found");
+    }
+    return "Country updated successfully";
+  } catch (err) {
+    throw new Error(err.message || 'Error updating country');
+  }
 }
 
 // Delete country function
-function deleteCountry(id) {
-  return new Promise((resolve, reject) => {
-    Country.destroy({
-      where: { id: id },
-    })
-      .then((numDeleted) => {
-        if (numDeleted === 0) {
-          reject("Country not found");
-        } else {
-          resolve();
-        }
-      })
-      .catch((err) => reject(err.message || "Error deleting country"));
-  });
+async function deleteCountry(id) {
+  try {
+    const deletedRows = await Country.destroy({
+      where: { id: id }
+    });
+    
+    if (deletedRows === 0) {
+      throw new Error("Country not found");
+    }
+    return "Country deleted successfully";
+  } catch (err) {
+    throw new Error(err.message || 'Error deleting country');
+  }
 }
 
 module.exports = {
