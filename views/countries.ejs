@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Countries</title>
+  <link rel="stylesheet" href="/css/main.css" />
+
+</head>
+
+<body tabindex="-1">
+
+  <%- include('partials/navbar', {page: '/countries'}) %>
+
+  <br />
+
+  <div class="container mx-auto p-4">
+
+    <div class="hero bg-base-200 rounded-lg p-6">
+      <div class="hero-content text-center ">
+        <div class="max-w-md">
+          <h1 class="text-5xl font-bold">Countries</h1>
+
+          <p class="py-6">Browse all UN countries.  Click the region | sub-region to filter by [sub-]regions such as: 
+            <a href="/countries?region=Africa" class="btn btn-primary mt-2 btn-xs">Africa</a>
+            <a href="/countries?region=Americas" class="btn btn-primary mt-2 btn-xs">Americas</a>
+            <a href="/countries?region=Asia" class="btn btn-primary mt-2 btn-xs">Asia</a>
+            <a href="/countries?region=Europe" class="btn btn-primary mt-2 btn-xs">Europe</a>
+            <a href="/countries?region=Oceania" class="btn btn-primary mt-2 btn-xs">Oceania</a>
+            <!-- <br>Or click the sub-region to filter by sub-regions such as:  -->
+            <a href="/countries?subRegion=North America" class="btn btn-primary mt-2 btn-xs">North America</a>
+            <a href="/countries?subRegion=Eastern Asia" class="btn btn-primary mt-2 btn-xs">Eastern Asia</a>
+            <a href="/countries?subRegion=Southern Africa" class="btn btn-primary mt-2 btn-xs">Southern Africa</a>
+        </p>
+
+        </div>
+      </div>
+    </div>
+
+    <br />
+
+
+    <div class="overflow-x-auto overflow-y-hidden">
+      <table class="table table-zebra">
+        <!-- head -->
+        
+        <tbody>
+          <% countries.forEach(country=> { %>
+            <tr>
+              <td>
+                <img src="<%= country.flag %>" alt="flag" class="h-32 rounded-lg m-3 "/>
+                <!-- <div class="avatar">
+                  <div class="h-32 w-52 rounded-lg bg-transparent bg-no-repeat bg-cover " style="background-image: url('<%= country.flag %>');"></div>
+                </div> -->
+              </td>
+
+              <td>
+                <!-- <img src="<%= country.coatOfArms %>" alt="coatOfArms" class="h-12"/> -->
+                <div class="avatar">
+                    <div class="h-10 w-10 rounded-lg bg-transparent bg-no-repeat bg-cover " style="background-image: url('<%= country.coatOfArms %>');"></div>
+                </div>
+              </td>
+
+              <td>
+                <span class="font-bold"><%= country.commonName %></span> 
+                <span class="font-bold"><%= country.commonName == country.nativeName ? '' : "( " + country.nativeName + " )" %></span> 
+                <!-- <span class="font-bold"><%= country.officialName %></span>  -->
+                <!-- <span class="font-bold"><%= country.officialName.includes(country.nativeName) ? '' : "( " + country.nativeName + " )" %></span>  -->
+              </td>
+
+              <td>
+                <!-- <img src="<%= country.coatOfArms %>" alt="coatOfArms" style="height:10;"/>  -->
+                <a href="/countries?region=<%= country.subRegionObj.region %>" class="btn btn-primary  mt-2 btn-xs"><%= country.subRegionObj.region %></a>
+                | <a href="/countries?subRegion=<%= country.subRegionObj.subRegion %>" class="btn btn-primary  mt-2 btn-xs"><%= country.subRegionObj.subRegion %></a>
+                
+              </td>
+
+              <td>
+                <span class="font-bold">Capital: </span><%= country.capital %>
+              </td>
+
+              <td>
+                <span class="font-bold">Population:</span>&nbsp;<%= (country.population*1).toLocaleString() %> <br>
+                <span class="font-bold">Area:</span> <%= (country.area*1).toLocaleString() %> Km<sup>2</sup></td> 
+              <th>
+                <a href="/countries/<%= country.id %>" class="btn btn-primary btn-xs">details</a>
+              </th>
+
+
+            </tr>
+
+            <% }); %>
+
+        </tbody>
+
+
+      </table>
+    </div>
+
+</body>
+
+</html>
