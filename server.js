@@ -6,9 +6,9 @@
  *
  *  https://www.senecacollege.ca/about/policies/academic-integrity-policy.html
  *
- *  Name: Hasit Patel Student ID: 170852214 Date: 12/06/2023
+ *  Name: Hasit Patel Student ID: 143320232 Date: 12/06/2023
  *
- *  Published URL: https://web322-a6-hasit.cyclic.app
+ *  Published URL:
  *
  ********************************************************************************/
 
@@ -63,55 +63,57 @@ app.get("/about", (req, res) => {
 
 // Login Routes
 app.get("/login", (req, res) => {
-  res.render('login', {
+  res.render("login", {
     errorMessage: null,
-    userName: ''
+    userName: "",
   });
 });
 
 app.post("/login", (req, res) => {
-  req.body.userAgent = req.get('User-Agent');
-  
-  authData.checkUser(req.body)
+  req.body.userAgent = req.get("User-Agent");
+
+  authData
+    .checkUser(req.body)
     .then((user) => {
       req.session.user = {
         userName: user.userName,
         email: user.email,
-        loginHistory: user.loginHistory
+        loginHistory: user.loginHistory,
       };
-      res.redirect('/countries');
+      res.redirect("/countries");
     })
-    .catch(err => {
-      res.render('login', {
+    .catch((err) => {
+      res.render("login", {
         errorMessage: err,
-        userName: req.body.userName
+        userName: req.body.userName,
       });
     });
 });
 
 // Register Routes
 app.get("/register", (req, res) => {
-  res.render('register', {
+  res.render("register", {
     errorMessage: null,
     successMessage: null,
-    userName: ''
+    userName: "",
   });
 });
 
 app.post("/register", (req, res) => {
-  authData.registerUser(req.body)
+  authData
+    .registerUser(req.body)
     .then(() => {
-      res.render('register', {
+      res.render("register", {
         successMessage: "User created",
         errorMessage: null,
-        userName: ''
+        userName: "",
       });
     })
-    .catch(err => {
-      res.render('register', {
+    .catch((err) => {
+      res.render("register", {
         errorMessage: err,
         successMessage: null,
-        userName: req.body.userName
+        userName: req.body.userName,
       });
     });
 });
@@ -119,7 +121,7 @@ app.post("/register", (req, res) => {
 // Logout route
 app.get("/logout", (req, res) => {
   req.session.reset();
-  res.redirect('/');
+  res.redirect("/");
 });
 
 // User History route
@@ -129,61 +131,62 @@ app.get("/userHistory", ensureLogin, (req, res) => {
 
 // Country routes
 app.get("/countries", (req, res) => {
-    const region = req.query.region;
-    
-    const getCountries = region 
-        ? countryDB.getCountriesByRegion(region)
-        : countryDB.getAllCountries();
-        
-    getCountries
-        .then((data) => {
-            res.render("countries", { 
-                countries: data,
-                region: region || null,
-                message: null
-            });
-        })
-        .catch((err) => {
-            res.render("countries", { 
-                countries: [],
-                region: region || null,
-                message: "No results found"
-            });
-        });
+  const region = req.query.region;
+
+  const getCountries = region
+    ? countryDB.getCountriesByRegion(region)
+    : countryDB.getAllCountries();
+
+  getCountries
+    .then((data) => {
+      res.render("countries", {
+        countries: data,
+        region: region || null,
+        message: null,
+      });
+    })
+    .catch((err) => {
+      res.render("countries", {
+        countries: [],
+        region: region || null,
+        message: "No results found",
+      });
+    });
 });
 
 // Single country route
 app.get("/countries/:id", async (req, res) => {
-    try {
-        const country = await countryDB.getCountryById(req.params.id);
-        res.render("country", { country: country });
-    } catch (error) {
-        res.status(404).render("404", { message: error.message });
-    }
+  try {
+    const country = await countryDB.getCountryById(req.params.id);
+    res.render("country", { country: country });
+  } catch (error) {
+    res.status(404).render("404", { message: error.message });
+  }
 });
 
 // Protected routes - require login
 app.get("/country/:id", (req, res) => {
-    countryDB.getCountryById(req.params.id)
-        .then((country) => {
-            if (country) {
-                res.render("country", { 
-                    country: country,
-                    session: req.session
-                });
-            } else {
-                res.status(404).render("404", {
-                    message: "Country not found",
-                    session: req.session
-                });
-            }
-        })
-        .catch((err) => {
-            res.status(404).render("404", {
-                message: "Country not found",
-                session: req.session
-            });
+  countryDB
+    .getCountryById(req.params.id)
+    .then((country) => {
+      if (country) {
+        res.render("country", {
+          country: country,
+          session: req.session,
         });
+      } else {
+        res.status(404).render("404", {
+          message: "Country not found",
+          session: req.session,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(404).render("404", {
+        message: "Country not found",
+        session: req.session,
+      });
+    });
 });
 
 app.get("/addCountry", ensureLogin, (req, res) => {
@@ -218,52 +221,52 @@ app.post("/addCountry", ensureLogin, (req, res) => {
 });
 
 // Edit Country Routes
-app.get('/editCountry/:id', ensureLogin, async (req, res) => {
-    try {
-        const [country, subRegions] = await Promise.all([
-            countryDB.getCountryById(req.params.id),
-            countryDB.getAllSubRegions()
-        ]);
-        res.render('editCountry', { country: country, subRegions: subRegions });
-    } catch(err) {
-        res.status(404).render('404', { message: err });
-    }
+app.get("/editCountry/:id", ensureLogin, async (req, res) => {
+  try {
+    const [country, subRegions] = await Promise.all([
+      countryDB.getCountryById(req.params.id),
+      countryDB.getAllSubRegions(),
+    ]);
+    res.render("editCountry", { country: country, subRegions: subRegions });
+  } catch (err) {
+    res.status(404).render("404", { message: err });
+  }
 });
 
-app.post('/editCountry', ensureLogin, async (req, res) => {
-    try {
-        await countryDB.editCountry(req.body.id, req.body);
-        res.redirect('/countries');
-    } catch(err) {
-        res.render('500', { message: `Error: ${err}` });
-    }
+app.post("/editCountry", ensureLogin, async (req, res) => {
+  try {
+    await countryDB.editCountry(req.body.id, req.body);
+    res.redirect("/countries");
+  } catch (err) {
+    res.render("500", { message: `Error: ${err}` });
+  }
 });
 
 // Delete Country Route
-app.get('/deleteCountry/:id', ensureLogin, async (req, res) => {
-    try {
-        await countryDB.deleteCountry(req.params.id);
-        res.redirect('/countries');
-    } catch(err) {
-        res.render('500', { message: `Error: ${err}` });
-    }
+app.get("/deleteCountry/:id", ensureLogin, async (req, res) => {
+  try {
+    await countryDB.deleteCountry(req.params.id);
+    res.redirect("/countries");
+  } catch (err) {
+    res.render("500", { message: `Error: ${err}` });
+  }
 });
 
 // 404 handler for undefined routes
 app.use((req, res) => {
-    res.status(404).render("404", {
-        message: "Page Not Found",
-        session: req.session
-    });
+  res.status(404).render("404", {
+    message: "Page Not Found",
+    session: req.session,
+  });
 });
 
 // Initialize both services before starting the server
 Promise.all([countryDB.initialize(), authData.initialize()])
-    .then(() => {
-        app.listen(HTTP_PORT, () => {
-            console.log('✓ Server running successfully at http://localhost:8080');
-        });
-    })
-    .catch((err) => {
-        console.error('✘ Error:', err);
+  .then(() => {
+    app.listen(HTTP_PORT, () => {
+      console.log("✓ Server running successfully at http://localhost:8080");
     });
+  })
+  .catch((err) => {
+    console.error("✘ Error:", err);
+  });
