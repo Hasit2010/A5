@@ -3,122 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Country</title>
     <link rel="stylesheet" href="/css/main.css">
+    <title>Edit Country</title>
 </head>
 <body>
-    <%- include('partials/navbar', {page: '' }) %>
+    <%- include('partials/navbar', {page: ''}) %>
 
-    <div class="container mx-auto px-4">
-        <div class="hero bg-base-200 rounded-lg p-6 mb-8">
-            <div class="hero-content text-center">
-                <div class="max-w-md">
-                    <h1 class="text-5xl font-bold">Edit Country</h1>
-                    <p class="py-6">Editing: <%= country.commonName %></p>
-                </div>
+    <div class="hero bg-base-200">
+        <div class="hero-content text-center">
+            <div class="max-w-md">
+                <h1 class="text-5xl font-bold">Edit Country</h1>
+                <p class="py-6">Update country information</p>
             </div>
         </div>
+    </div>
 
-        <form action="/editCountry" method="POST" class="card bg-base-100 shadow-xl">
-            <div class="card-body">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="form-control">
-                        <label class="label">Common Name</label>
-                        <input type="text" name="commonName" required class="input input-bordered" 
-                            value="<%= country.commonName %>">
-                    </div>
+    <div class="container mx-auto p-6">
+        <form method="POST" action="/editCountry" class="max-w-xl mx-auto space-y-4">
+            <input type="hidden" name="id" value="<%= country.id %>">
+            
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">Common Name</span>
+                </label>
+                <input type="text" name="commonName" class="input input-bordered" value="<%= country.commonName %>" required>
+            </div>
 
-                    <div class="form-control">
-                        <label class="label">Official Name</label>
-                        <input type="text" name="officialName" required class="input input-bordered" 
-                            value="<%= country.officialName %>">
-                    </div>
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">Official Name</span>
+                </label>
+                <input type="text" name="officialName" class="input input-bordered" value="<%= country.officialName %>" required>
+            </div>
 
-                    <div class="form-control">
-                        <label class="label">Native Name</label>
-                        <input type="text" name="nativeName" required class="input input-bordered" 
-                            value="<%= country.nativeName %>">
-                    </div>
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">Capital</span>
+                </label>
+                <input type="text" name="capital" class="input input-bordered" value="<%= country.capital %>" required>
+            </div>
 
-                    <div class="form-control">
-                        <label class="label">Numeric-3 Code</label>
-                        <input type="text" name="id" required class="input input-bordered cursor-not-allowed" 
-                            value="<%= country.id %>" readonly>
-                    </div>
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">Population</span>
+                </label>
+                <input type="number" name="population" class="input input-bordered" value="<%= country.population %>" required>
+            </div>
 
-                    <div class="form-control">
-                        <label class="label">Capital</label>
-                        <input type="text" name="capital" required class="input input-bordered" 
-                            value="<%= country.capital %>">
-                    </div>
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">Area (Km²)</span>
+                </label>
+                <input type="number" name="area" class="input input-bordered" value="<%= country.area %>" required>
+            </div>
 
-                    <div class="form-control">
-                        <label class="label">Languages</label>
-                        <input type="text" name="languages" required class="input input-bordered" 
-                            value="<%= country.languages %>">
-                    </div>
-
-                    <div class="form-control">
-                        <label class="label">Population</label>
-                        <input type="number" name="population" required class="input input-bordered" 
-                            value="<%= country.population %>">
-                    </div>
-
-                    <div class="form-control">
-                        <label class="label">Area</label>
-                        <input type="number" name="area" required class="input input-bordered" 
-                            value="<%= country.area %>">
-                    </div>
-
-                    <div class="form-control">
-                        <label class="label">Currencies</label>
-                        <input type="text" name="currencies" required class="input input-bordered" 
-                            value="<%= country.currencies %>">
-                    </div>
-
-                    <div class="form-control">
-                        <label class="label">(Sub) Region</label>
-                        <select name="subRegionId" required class="select select-bordered">
-                            <% subRegions.forEach(subRegion => { %>
-                                <option value="<%= subRegion.id %>" 
-                                    <%= (country.subRegionId == subRegion.id) ? "selected" : "" %>>
-                                    <%= subRegion.region %> - <%= subRegion.subRegion %>
-                                </option>
-                            <% }) %>
-                        </select>
-                    </div>
-
-                    <div class="form-control">
-                        <label class="label cursor-pointer">
-                            <span class="label-text">Is Landlocked?</span>
-                            <input type="checkbox" name="landlocked" class="checkbox" 
-                                <%= country.landlocked ? "checked" : "" %>>
-                        </label>
-                    </div>
-
-                    <div class="form-control">
-                        <label class="label">Open Street Maps URL</label>
-                        <input type="text" name="openStreetMaps" class="input input-bordered" 
-                            value="<%= country.openStreetMaps %>">
-                    </div>
-
-                    <div class="form-control">
-                        <label class="label">Flag Image URL</label>
-                        <input type="text" name="flag" required class="input input-bordered" 
-                            value="<%= country.flag %>">
-                    </div>
-
-                    <div class="form-control">
-                        <label class="label">Coat of Arms URL</label>
-                        <input type="text" name="coatOfArms" required class="input input-bordered" 
-                            value="<%= country.coatOfArms %>">
-                    </div>
-                </div>
-
-                <div class="card-actions justify-end mt-6">
-                    <button type="submit" class="btn btn-primary">Update Country</button>
-                    <a href="/deleteCountry/<%= country.id %>" class="btn btn-error">Delete Country</a>
-                </div>
+            <div class="flex justify-end space-x-4">
+                <a href="/countries" class="btn">Cancel</a>
+                <button type="submit" class="btn btn-primary">Update Country</button>
             </div>
         </form>
     </div>

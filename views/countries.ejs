@@ -21,16 +21,15 @@
         <div class="max-w-md">
           <h1 class="text-5xl font-bold">Countries</h1>
 
-          <p class="py-6">Browse all UN countries. Click the region | sub-region to filter by [sub-]regions such as:
-            <a href="/countries?region=Africa" class="btn btn-primary mt-2 btn-xs">Africa</a>
-            <a href="/countries?region=Americas" class="btn btn-primary mt-2 btn-xs">Americas</a>
-            <a href="/countries?region=Asia" class="btn btn-primary mt-2 btn-xs">Asia</a>
-            <a href="/countries?region=Europe" class="btn btn-primary mt-2 btn-xs">Europe</a>
-            <a href="/countries?region=Oceania" class="btn btn-primary mt-2 btn-xs">Oceania</a>
-            <a href="/countries?subRegion=North America" class="btn btn-primary mt-2 btn-xs">North America</a>
-            <a href="/countries?subRegion=Eastern Asia" class="btn btn-primary mt-2 btn-xs">Eastern Asia</a>
-            <a href="/countries?subRegion=Southern Africa" class="btn btn-primary mt-2 btn-xs">Southern Africa</a>
-          </p>
+          <p class="py-6">Filter by Region:</p>
+          <div class="flex flex-wrap gap-2 justify-center">
+            <a href="/countries" class="btn btn-sm <%= !region ? 'btn-active' : '' %>">All</a>
+            <a href="/countries?region=Africa" class="btn btn-sm <%= region === 'Africa' ? 'btn-active' : '' %>">Africa</a>
+            <a href="/countries?region=Americas" class="btn btn-sm <%= region === 'Americas' ? 'btn-active' : '' %>">Americas</a>
+            <a href="/countries?region=Asia" class="btn btn-sm <%= region === 'Asia' ? 'btn-active' : '' %>">Asia</a>
+            <a href="/countries?region=Europe" class="btn btn-sm <%= region === 'Europe' ? 'btn-active' : '' %>">Europe</a>
+            <a href="/countries?region=Oceania" class="btn btn-sm <%= region === 'Oceania' ? 'btn-active' : '' %>">Oceania</a>
+          </div>
 
         </div>
       </div>
@@ -38,47 +37,27 @@
 
     <br />
 
-    <div class="overflow-x-auto overflow-y-hidden">
-      <table class="table table-zebra">
-        <tbody>
-          <% countries.forEach(country => { %>
-            <tr>
-              <td>
-                <img src="<%= country.flag %>" alt="flag" class="h-32 rounded-lg m-3" />
-              </td>
-
-              <td>
-                <div class="avatar">
-                  <div class="h-10 w-10 rounded-lg bg-transparent bg-no-repeat bg-cover" style="background-image: url('<%= country.coatOfArms %>');"></div>
-                </div>
-              </td>
-
-              <td>
-                <span class="font-bold"><%= country.commonName %></span>
-                <span class="font-bold"><%= country.commonName === country.nativeName ? '' : "( " + country.nativeName + " )" %></span>
-              </td>
-
-              <td>
-                <a href="/countries?region=<%= country.SubRegion.region %>" class="btn btn-primary mt-2 btn-xs"><%= country.SubRegion.region %></a>
-                | <a href="/countries?subRegion=<%= country.SubRegion.subRegion %>" class="btn btn-primary mt-2 btn-xs"><%= country.SubRegion.subRegion %></a>
-              </td>
-
-              <td>
-                <span class="font-bold">Capital: </span><%= country.capital %>
-              </td>
-
-              <td>
-                <span class="font-bold">Population:</span>&nbsp;<%= (country.population * 1).toLocaleString() %><br>
-                <span class="font-bold">Area:</span> <%= (country.area * 1).toLocaleString() %> Km<sup>2</sup>
-              </td>
-
-              <th>
-                <a href="/countries/<%= country.id %>" class="btn btn-primary btn-xs">details</a>
-              </th>
-            </tr>
-          <% }); %>
-        </tbody>
-      </table>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+      <% countries.forEach(country => { %>
+        <div class="card bg-base-100 shadow-xl h-full">
+          <figure class="aspect-[2/1] relative overflow-hidden">
+            <img src="<%= country.flag %>" 
+                 alt="<%= country.commonName %> flag"
+                 class="object-cover w-full h-full"
+                 style="aspect-ratio: 2/1;">
+          </figure>
+          <div class="card-body p-6">
+            <h2 class="card-title text-2xl mb-4"><%= country.commonName %></h2>
+            <div class="space-y-2">
+              <p><span class="font-semibold">Capital:</span> <%= country.capital %></p>
+              <p><span class="font-semibold">Region:</span> <%= country.SubRegion ? country.SubRegion.region : 'N/A' %></p>
+            </div>
+            <div class="card-actions justify-end mt-4">
+              <a href="/country/<%= country.id %>" class="btn btn-primary">Learn More</a>
+            </div>
+          </div>
+        </div>
+      <% }); %>
     </div>
 
   </div>

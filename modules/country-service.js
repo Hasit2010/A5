@@ -1,177 +1,175 @@
-require("dotenv").config();
-const Sequelize = require("sequelize");
+require('dotenv').config();
+require('pg');
+const Sequelize = require('sequelize');
 
-const sequelize = new Sequelize(
-  process.env.DB_DATABASE,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
+// Database connection
+const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
     host: process.env.DB_HOST,
-    dialect: "postgres",
-    ssl: true,
+    dialect: 'postgres',
+    port: 5432,
     dialectOptions: {
-      ssl: { require: true, rejectUnauthorized: false },
-    },
-  }
-);
+        ssl: { rejectUnauthorized: false }
+    }
+});
 
-// Models
-const SubRegion = sequelize.define(
-  "SubRegion",
-  {
-    id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+// Define models
+const SubRegion = sequelize.define('SubRegion', {
+    id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
     subRegion: Sequelize.STRING,
-    region: Sequelize.STRING,
-  },
-  { timestamps: false }
-);
+    region: Sequelize.STRING
+}, {
+    timestamps: false
+});
 
-const Country = sequelize.define(
-  "Country",
-  {
-    id: { type: Sequelize.STRING, primaryKey: true },
-    commonName: {
-      type: Sequelize.STRING,
-      set(val) {
-        this.setDataValue('commonName', val ? val.trim() : null);
-      }
+const Country = sequelize.define('Country', {
+    id: {
+        type: Sequelize.STRING,
+        primaryKey: true
     },
-    officialName: {
-      type: Sequelize.STRING,
-      set(val) {
-        this.setDataValue('officialName', val ? val.trim() : null);
-      }
-    },
-    nativeName: {
-      type: Sequelize.STRING,
-      set(val) {
-        this.setDataValue('nativeName', val ? val.trim() : null);
-      }
-    },
-    currencies: {
-      type: Sequelize.STRING,
-      set(val) {
-        this.setDataValue('currencies', val ? val.trim() : null);
-      }
-    },
-    capital: {
-      type: Sequelize.STRING,
-      set(val) {
-        this.setDataValue('capital', val ? val.trim() : null);
-      }
-    },
-    languages: {
-      type: Sequelize.STRING,
-      set(val) {
-        this.setDataValue('languages', val ? val.trim() : null);
-      }
-    },
+    commonName: Sequelize.STRING,
+    officialName: Sequelize.STRING,
+    nativeName: Sequelize.STRING,
+    currencies: Sequelize.STRING,
+    capital: Sequelize.STRING,
+    languages: Sequelize.STRING,
     openStreetMaps: Sequelize.STRING,
     population: Sequelize.INTEGER,
     area: Sequelize.INTEGER,
     landlocked: Sequelize.BOOLEAN,
     coatOfArms: Sequelize.STRING,
     flag: Sequelize.STRING,
-    subRegionId: Sequelize.INTEGER,
-  },
-  { timestamps: false }
-);
+    subRegionId: Sequelize.INTEGER
+}, {
+    timestamps: false
+});
 
-Country.belongsTo(SubRegion, { foreignKey: "subRegionId" });
+// Define associations
+Country.belongsTo(SubRegion, {foreignKey: 'subRegionId'});
 
-// Initialization
+// Functions
 function initialize() {
-  return sequelize.sync();
+    return new Promise((resolve, reject) => {
+        sequelize.sync()
+            .then(() => resolve())
+            .catch((err) => reject(err));
+    });
 }
 
-// Get all countries
 function getAllCountries() {
-  return Country.findAll({ include: SubRegion });
+    return new Promise((resolve, reject) => {
+        Country.findAll({
+            include: [SubRegion]
+        })
+        .then(countries => resolve(countries))
+        .catch(err => reject(err));
+    });
 }
 
-// Get a country by ID
 function getCountryById(id) {
-  return Country.findByPk(id, { include: SubRegion });
-}
-
-// Get countries by sub-region
-function getCountriesBySubRegion(subRegionName) {
-  return Country.findAll({
-    include: {
-      model: SubRegion,
-      where: { subRegion: { [Sequelize.Op.iLike]: `%${subRegionName}%` } },
-    },
-  });
-}
-
-// Get countries by region
-function getCountriesByRegion(regionName) {
-  return Country.findAll({
-    include: {
-      model: SubRegion,
-      where: { region: { [Sequelize.Op.iLike]: `%${regionName}%` } },
-    },
-  });
-}
-
-// Get all sub-regions
-const getAllSubRegions = async () => {
-  try {
-    return await SubRegion.findAll();
-  } catch (err) {
-    throw new Error(`Error getting sub-regions: ${err.message}`);
-  }
-};
-
-// Add a new country
-const addCountry = async (countryData) => {
-  try {
-    await Country.create(countryData);
-  } catch (err) {
-    throw new Error(err.errors?.[0]?.message || "Error creating country");
-  }
-};
-
-// Edit country function
-async function editCountry(id, countryData) {
-  try {
-    const [updatedRows] = await Country.update(countryData, {
-      where: { id: id }
+    return new Promise((resolve, reject) => {
+        Country.findAll({
+            include: [SubRegion],
+            where: { id: id }
+        })
+        .then(countries => {
+            if (countries.length > 0) {
+                resolve(countries[0]);
+            } else {
+                reject("Unable to find requested country");
+            }
+        })
+        .catch(err => reject(err));
     });
-    
-    if (updatedRows === 0) {
-      throw new Error("Country not found");
-    }
-    return "Country updated successfully";
-  } catch (err) {
-    throw new Error(err.message || 'Error updating country');
-  }
 }
 
-// Delete country function
-async function deleteCountry(id) {
-  try {
-    const deletedRows = await Country.destroy({
-      where: { id: id }
+function getCountriesBySubRegion(subRegion) {
+    return new Promise((resolve, reject) => {
+        Country.findAll({
+            include: [SubRegion],
+            where: {
+                '$SubRegion.subRegion$': {
+                    [Sequelize.Op.iLike]: `%${subRegion}%`
+                }
+            }
+        })
+        .then(countries => {
+            if (countries.length > 0) {
+                resolve(countries);
+            } else {
+                reject("Unable to find requested countries");
+            }
+        })
+        .catch(err => reject(err));
     });
-    
-    if (deletedRows === 0) {
-      throw new Error("Country not found");
-    }
-    return "Country deleted successfully";
-  } catch (err) {
-    throw new Error(err.message || 'Error deleting country');
-  }
+}
+
+function getCountriesByRegion(region) {
+    return new Promise((resolve, reject) => {
+        Country.findAll({
+            include: [SubRegion],
+            where: {
+                '$SubRegion.region$': region
+            }
+        })
+        .then(countries => {
+            if (countries.length > 0) {
+                resolve(countries);
+            } else {
+                reject("No countries found in this region");
+            }
+        })
+        .catch(err => reject(err));
+    });
+}
+
+function getAllSubRegions() {
+    return new Promise((resolve, reject) => {
+        SubRegion.findAll()
+            .then(subRegions => resolve(subRegions))
+            .catch(err => reject(err));
+    });
+}
+
+function addCountry(countryData) {
+    return new Promise((resolve, reject) => {
+        Country.create(countryData)
+            .then(() => resolve())
+            .catch(err => reject(err.errors[0].message));
+    });
+}
+
+function editCountry(id, countryData) {
+    return new Promise((resolve, reject) => {
+        Country.update(countryData, {
+            where: { id: id }
+        })
+        .then(() => resolve())
+        .catch(err => reject(err.errors[0].message));
+    });
+}
+
+function deleteCountry(id) {
+    return new Promise((resolve, reject) => {
+        Country.destroy({
+            where: { id: id }
+        })
+        .then(() => resolve())
+        .catch(err => reject(err.errors[0].message));
+    });
 }
 
 module.exports = {
-  initialize,
-  getAllCountries,
-  getCountryById,
-  getCountriesBySubRegion,
-  getCountriesByRegion,
-  getAllSubRegions,
-  addCountry,
-  editCountry,
-  deleteCountry,
+    initialize,
+    getAllCountries,
+    getCountryById,
+    getCountriesBySubRegion,
+    getCountriesByRegion,
+    getAllSubRegions,
+    addCountry,
+    editCountry,
+    deleteCountry
 };
